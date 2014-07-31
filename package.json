@@ -1,0 +1,10 @@
+{
+  "dependencies": {
+    "asteroid": "git+https://github.com/mondora/asteroid",
+    "fs-extra": "^0.10.0",
+    "lodash": "^2.4.1",
+    "player": "^0.1.8",
+    "youtube-mp3": "^0.1.2",
+    "yttmal": "0.0.3"
+  }
+}
