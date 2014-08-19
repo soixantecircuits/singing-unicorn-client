@@ -1,0 +1,16 @@
+#!/bin/sh
+PROJECTPATH='/Users/ivs/Sources/singing-unicorn-client/'
+NODECOMMAND=/usr/bin/node
+LAUNCHCOMMAND='/usr/bin/node gounicorn.js'
+PROJECTNAME='unicorn'
+
+cd $PROJECTPATH
+while true; do
+if ps ax | grep -v grep | grep '/bin/$PROJECTPATH'
+then
+echo "found"
+else
+echo "run"
+$LAUNCHCOMMAND
+fi
+done
