@@ -1,5 +1,5 @@
 'use strict';
-var address = 'singingunicorn.meteor.com',
+var address = 'localhost:3000',
   unicorn,
   playlist,
   playlistRQ,
@@ -11,7 +11,7 @@ var address = 'singingunicorn.meteor.com',
   mp3List = [],
   _ = require('lodash'),
   mp3 = require('youtube-mp3'),
-  Asteroid = require("asteroid"),
+  Asteroid = require('asteroid'),
   fs = require('fs-extra'),
   yttmal = require('yttmal'),
   Player = require('player');
@@ -142,8 +142,8 @@ var tryToPlay = function(){
 
 var connectUnicorn = function() {
   unicorn = new Asteroid(address, false, function handlerSocket(err) {
-    //console.error('Socket event: ');
-    //console.error(err);
+    console.error('Socket event: ');
+    console.error(err);
   });
   unicorn.on('error', function(err) {
     console.error('Error: ');
