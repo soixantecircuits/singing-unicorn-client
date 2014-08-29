@@ -1,5 +1,6 @@
 'use strict';
-var address = 'singingunicorn.meteor.com',
+var address = 'localhost:3000',
+//var address = 'singingunicorn.meteor.com',
   unicorn,
   playlist,
   playlistRQ,
@@ -142,15 +143,18 @@ var tryToPlay = function(){
 
 var connectUnicorn = function() {
   unicorn = new Asteroid(address, false, function handlerSocket(err) {
-    //console.error('Socket event: ');
-    //console.error(err);
+    console.error('Socket event: ');
+    console.error(err);
   });
   unicorn.on('error', function(err) {
     console.error('Error: ');
     console.error(err);
   });
 
-  unicorn.subscribe('playlist');
+  var test = unicorn.subscribe('playlist');
+  test.fail(function(){
+    console.log('ERROOR--------');
+  });
   playlist = unicorn.getCollection('playlist');
   playlistRQ = playlist.reactiveQuery({});
 
