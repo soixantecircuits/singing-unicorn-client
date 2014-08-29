@@ -1,6 +1,6 @@
 'use strict';
-var address = 'localhost:3000',
-//var address = 'singingunicorn.meteor.com',
+//var address = 'localhost:3000',
+var address = 'singingunicorn.meteor.com',
   unicorn,
   playlist,
   playlistRQ,
@@ -9,10 +9,10 @@ var address = 'localhost:3000',
   player = undefined,
   currenTitle = '',
   isPlaying = false,
-  mp3List = [],
+  mp3List = [], localplay = [],
   _ = require('lodash'),
   mp3 = require('youtube-mp3'),
-  Asteroid = require("asteroid"),
+  Asteroid = require('asteroid'),
   fs = require('fs-extra'),
   yttmal = require('yttmal'),
   Player = require('player');
@@ -68,16 +68,17 @@ var updatePlayEnd = function(_id) {
 }
 
 var updatePlayStart = function(_id) {
-  console.log('[ > ** Play start:');
-  console.log('curentTitle _id: ' + _id);
-  isPlaying = true;
-  var method = unicorn.call('updatePlayStart', _id);
-
-  var outer = method.result.then(function onResolve(result) {
-    console.log('Response:' + result);
-  }).catch(function onReject(err) {
-    console.error('FAILED', err)
-  });
+  if (_id != '') {
+    console.log('[ > ** Play start:');
+    console.log('curentTitle _id: ' + _id);
+    isPlaying = true;
+    var method = unicorn.call('updatePlayStart', _id);
+    var outer = method.result.then(function onResolve(result) {
+      console.log('Response:' + result);
+    }).catch(function onReject(err) {
+      console.error('FAILED', err)
+    });
+  }
 }
 
 //not used right now
@@ -122,23 +123,26 @@ var downloadYTanPlay = function(videoId, fileName, collectionID) {
 };
 
 var downloadAndPlaySound = function() {
-  if (playlistRQ.result.length > 0) {
+  if (localplay.length > 0) {
     console.log('Try to start the play');
     isPlaying = true;
-    var index = _.random(0, playlistRQ.result.length - 1);
-    var videoId = playlistRQ.result[index].videoId;
-    var fileName = mp3List[index]._id + '.mp3';
-    downloadYTanPlay(videoId, fileName, mp3List[index]._id);
+    var index = _.random(0, localplay - 1);
+    var videoId = localplay[index].videoId;
+    var fileName = localplay[index]._id + '.mp3';
+    localplay.splice(index, 1);
+    downloadYTanPlay(videoId, fileName, localplay[index]._id);
   }
 }
 
-var tryToPlay = function(){
+var tryToPlay = function() {
   if (!isPlaying) {
-      console.log('Start new play !');
-      downloadAndPlaySound();
-    } else {
-      console.log('Playing track... wait for your turn');
-    }
+    console.log('Start new play !');
+    if(localplay.length < 1)
+      localplay = mp3List;
+    downloadAndPlaySound();
+  } else {
+    console.log('Playing track... wait for your turn');
+  }
 }
 
 var connectUnicorn = function() {
@@ -152,7 +156,7 @@ var connectUnicorn = function() {
   });
 
   var test = unicorn.subscribe('playlist');
-  test.fail(function(){
+  test.fail(function() {
     console.log('ERROOR--------');
   });
   playlist = unicorn.getCollection('playlist');
